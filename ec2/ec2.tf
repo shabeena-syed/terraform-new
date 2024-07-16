@@ -1,7 +1,7 @@
  # ec2
 resource "aws_instance" "db" {
   ami = var.image_id
-  vpc_security_group_ids = [aws_security_group.allow-ssh.id] # we can define created resource
+  vpc_security_group_ids = [aws_security_group.allow_ssh.id] # we can define created resource
   instance_type = var.instance_type
   #left side are arguments and right side are values.
 
@@ -9,25 +9,25 @@ resource "aws_instance" "db" {
 }
 
 #sg
-resource "aws_security_group" "allow-ssh" {
-  name        = "allow-ssh"
-  description = "allowing ssh"
+resource "aws_security_group" "allow_ssh" { # this name is the purpose of our own identification
+  name        = var.sg_name # should be same as tag Name
+  description = var.sg_description
   
-  ingress {
-    from_port        = 22
-    to_port          = 22
-    protocol         = "tcp"
-    cidr_blocks      = ["0.0.0.0/0"]  
+  ingress { # this is block
+    from_port        = var.ssh_port
+    to_port          = var.ssh_port
+    protocol         = var.protocol
+    cidr_blocks      = var.cidr_blocks
   }
   egress {
-    from_port        = 0 # all protocols opening
-    to_port          = 0
-    protocol         = "-1" # all proocols
-    cidr_blocks      = ["0.0.0.0/0"]  
+    from_port        = var.ssh_port # all protocols opening
+    to_port          = var.ssh_port
+    protocol         = var.protocol # all proocols
+    cidr_blocks      = var.cidr_blocks 
   }
 
   tags = {
-    Name = "allow-ssh"
+    Name = "allow 22" # same as name
     createdby = "shabeena"
   }
 }
